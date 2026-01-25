@@ -27,5 +27,16 @@ function validatePassword($password) {
     if (strlen($password) < 6) {
         return "Password must be at least 6 characters";
     }
+      if (!preg_match('/[A-Z]/', $password)) {
+        return "Password must contain at least 1 uppercase letter";
+    }
+
+     if (!preg_match('/[0-9]/', $password)) {
+        return "Password must contain at least 1 number";
+    }
+
+        if (!preg_match('/[!@#$%^&*]/', $password)) {
+        return "Password must contain at least 1 special character";
+    }
     return "";
 }

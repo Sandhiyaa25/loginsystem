@@ -1,6 +1,8 @@
 <?php
 session_start();
 require "includes/validation.php";
+require "users.php";
+
 
 $email    = $_POST['email'] ?? "";
 $username = $_POST['username'] ?? "";
@@ -9,7 +11,7 @@ $remember = isset($_POST['remember']);
 
 $errors = [];
 
-/* Validation */
+
 if ($msg = validateEmail($email)) $errors[] = $msg;
 if ($msg = validateUsername($username)) $errors[] = $msg;
 if ($msg = validatePassword($password)) $errors[] = $msg;
@@ -20,42 +22,59 @@ if (!empty($errors)) {
     exit;
 }
 
-/* Dummy Authentication */
 
-if ($email === "admin@example.com" && $password === "Admin@123")
-{
-  
+$authenticatedUser = null;
+$userFoundByEmail = null;
 
-    /* Theme Assignment Logic */
-if ($username === "user1") {
-    $theme = "dark";
-} elseif ($username === "user2") {
-    $theme = "warm";
-} elseif ($username === "user3") {
-    $theme = "light";
-} else {
-    $theme = "light";
+foreach ($users as $user) {
+
+    // First check email
+    if ($email === $user['email']) {
+        $userFoundByEmail = $user;
+
+        // Now check username
+        if ($username !== $user['username']) {
+            $_SESSION['errors'] = ["Username is incorrect"];
+            header("Location: login.php");
+            exit;
+        }
+
+        // Now check password
+        if ($password !== $user['password']) {
+            $_SESSION['errors'] = ["Password is incorrect"];
+            header("Location: login.php");
+            exit;
+        }
+
+        // If everything correct
+        $authenticatedUser = $user;
+        break;
+    }
 }
 
+if (!$userFoundByEmail) {
+    $_SESSION['errors'] = ["Email is not registered"];
+    header("Location: login.php");
+    exit;
+}
 
-    /* Session */
-    $_SESSION['username'] = $username;
-    $_SESSION['email'] = $email;
-    $_SESSION['theme'] = $theme;
+if ($authenticatedUser) {
 
-    /* Cookies */
+    $_SESSION['username'] = $authenticatedUser['username'];
+    $_SESSION['email'] = $authenticatedUser['email'];
+    $_SESSION['theme'] = $authenticatedUser['theme'];
+
     if ($remember) {
-        setcookie("remember_username", $username, time() + 60);
-        setcookie("user_theme", $theme, time() + 60);
-    } else {
-        setcookie("remember_username", "", time() - 3600);
+        setcookie("remember_username", $authenticatedUser['username'], time() + 60);
+        setcookie("user_theme", $authenticatedUser['theme'], time() + 60);
     }
+else {
+        setcookie("remember_username", "", time() - 3600);
+    
 
+    }
     header("Location: dashboard.php");
     exit;
 }
 
-/* Invalid Login */
-$_SESSION['errors'] = ["Invalid login credentials"];
-header("Location: login.php");
-exit;
+

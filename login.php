@@ -31,22 +31,20 @@ $theme = $_COOKIE['user_theme'] ?? "light";
             <div class="alert alert-danger"><?= $error ?></div>
         <?php endforeach; ?>
 
-        <!-- <form method="POST" action="auth.php"> -->
-            <form method="POST" action="auth.php" autocomplete="off">
-
+        <form method="POST" action="auth.php">
+            <!-- <form method="POST" action="auth.php" autocomplete="off"> -->
+        <div class="mb-3">
+                  <label>Username</label>
+                <input type="text" name="username" class="form-control"
+                       value="<?= htmlspecialchars($rememberedUsername) ?>">
+            </div>
 
             <div class="mb-3">
                 <label>Email</label>
                 <input type="text" name="email" class="form-control">
             </div>
 
-            <div class="mb-3">
-                <label>Username</label>
-                <input type="text" name="username" class="form-control"
-                       value="<?= htmlspecialchars($rememberedUsername) ?>">
-            </div>
-
-            <div class="mb-3">
+           <div class="mb-3">
                 <label>Password</label>
                 <input type="password" name="password" class="form-control">
             </div>

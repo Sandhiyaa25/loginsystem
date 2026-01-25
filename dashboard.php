@@ -24,6 +24,7 @@ $theme = $_SESSION['theme'];
 
 <body class="<?= $theme ?>">
 
+
 <div class="container mt-5">
     <div class="card p-4">
         <h3>Welcome, <?= $_SESSION['username'] ?></h3>
